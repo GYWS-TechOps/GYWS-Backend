@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import contactUsRoutes from './routes/contactUs.js';
 import cookieParser from 'cookie-parser';
 import path from 'path';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -11,6 +12,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
 
 const port = process.env.PORT || 8000;
 
