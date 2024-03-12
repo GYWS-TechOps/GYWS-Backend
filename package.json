@@ -2,7 +2,7 @@
   "name": "gyws",
   "version": "1.0.0",
   "description": "none",
-  "main": "index.js",
+  "main": "server.js",
   "type": "module",
   "engines": {
     "node": "18.x"
