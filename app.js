@@ -20,10 +20,6 @@ app.listen(port, () => {
     console.log("Server is Running on port: ", port);
 });
 
-app.get("/", (req, res) => {
-    res.status(200).send("Test is Successfull!")
-});
-
 app.use("/api/contactUs", contactUsRoutes);
 
 app.use(express.static(path.join(__dirname, '/client/dist')));
