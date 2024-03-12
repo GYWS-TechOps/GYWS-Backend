@@ -28,7 +28,7 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
 });
 
-app.get("/", (req, res) => {
+app.use("/", (req, res) => {
     res.send("HAPPY MOMENT! :) GYWS Backend Server is running...");
   });
 
