@@ -1,13 +1,11 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import contactUsRoutes from './routes/contactUs.js';
-import cookieParser from 'cookie-parser';
-// import path from 'path';
-import cors from 'cors';
+require("dotenv").config();
+const cors = require("cors");
+const express =require ('express');
+const contactUsRoutes = require("./routes/contactUsRoutes");
+const cookieParser = require("cookie-parser");
 
 dotenv.config();
 
-// const __dirname = path.resolve();
 const app = express();
 
 app.use(express.json());
@@ -22,11 +20,6 @@ app.listen(port, () => {
 
 app.use("/api/contactUs", contactUsRoutes);
 
-// app.use(express.static(path.join(__dirname, '/client/dist')));
-
-// app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
-// });
 
 app.get("/", (req, res) => {
     res.send("HAPPY MOMENT! :) GYWS Backend Server is running...");
