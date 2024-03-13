@@ -1,10 +1,10 @@
 require("dotenv").config();
 const cors = require("cors");
 const express =require ('express');
-const contactUsRoutes = require("./routes/contactUsRoutes");
+const contactUsRoutes = require("./routes/contactUs");
 const cookieParser = require("cookie-parser");
 
-dotenv.config();
+// dotenv.config();
 
 const app = express();
 

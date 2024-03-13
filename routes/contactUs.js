@@ -1,4 +1,4 @@
-const express =require ('express');
+const express = require('express');
 const nodemailer = require("nodemailer");
 const router = express.Router();
 
@@ -39,4 +39,4 @@ router.post("/", async (req, res, next) => {
     }
 })
 
-export default router;
+module.exports = router;
