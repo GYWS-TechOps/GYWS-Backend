@@ -9,12 +9,12 @@ router.post("/", async (req, res, next) => {
             port: 465,
             secure: true,
             auth: {
-                user: 'josaacounsellors@gmail.com',
+                user: 'server@gyws.org',
                 pass: process.env.MAIL
             }
         })
         const mailOptions = {
-            from: 'josaacounsellors@gmail.com',
+            from: 'server@gyws.org',
             to: process.env.ADMIN_MAIL,
             subject: `${req.body.firstName} through GYWS Website`,
             html: `User ${req.body.firstName} ${req.body.lastName} has sent this message for you. <br><br> <b>Message:</b> ${req.body.message} <br> <br> <b>Contact him back here:</b> <br> Email: ${req.body.email} <br> Phone No.: ${req.body.phone}`
