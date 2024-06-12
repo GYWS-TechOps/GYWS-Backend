@@ -3,7 +3,7 @@ const cors = require("cors");
 const express =require ('express');
 const contactUsRoutes = require("./routes/contactUs");
 const cookieParser = require("cookie-parser");
-
+const MailerRoute = require("./routes/Mailer")
 // dotenv.config();
 
 const app = express();
@@ -19,7 +19,7 @@ app.listen(port, () => {
 });
 
 app.use("/api/contactUs", contactUsRoutes);
-
+app.use("/api/Mail", MailerRoute)
 
 app.get("/", (req, res) => {
     res.send("HAPPY MOMENT! :) GYWS Backend Server is running...");
