@@ -1,11 +1,11 @@
-require("dotenv").config();
+const dotenv = require("dotenv");
 const cors = require("cors");
 const express =require ('express');
 const contactUsRoutes = require("./routes/contactUs");
 const cookieParser = require("cookie-parser");
 const MailerRoute = require("./routes/Mailer")
-// dotenv.config();
 
+dotenv.config();
 const app = express();
 
 app.use(express.json());
