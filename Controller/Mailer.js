@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+
 const Mail = (req, res) => {
     const { Name, RECIEVER_MAILS, MAIL_BODY, MAIL_SUBJECT, EMAIL, EMAIL_APP_PASSWORD } = req.body;
     const files = req.files;
