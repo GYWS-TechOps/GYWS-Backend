@@ -31,7 +31,7 @@ const Mail = (req, res) => {
             },
             to: receiveremails[i],
             subject: MAIL_SUBJECT,
-            html: `<div style="white-space: pre-wrap;">${MAIL_BODY}</div>`,
+            html: `<div>${MAIL_BODY}</div>`,
             attachments: attachments,
           };
           transporter.sendMail(message, (error, info) => {
