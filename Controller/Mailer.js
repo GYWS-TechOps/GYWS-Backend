@@ -1,4 +1,4 @@
-const nodemailer = require("nodemailer");
+import { createTransport } from "nodemailer";
 
 const Mail = (req, res) => {
   const { Name,BCC, RECIEVER_MAILS, MAIL_BODY, MAIL_SUBJECT, EMAIL, EMAIL_APP_PASSWORD } = req.body;
@@ -15,7 +15,7 @@ const Mail = (req, res) => {
     },
   };
 
-  let transporter = nodemailer.createTransport(config);
+  let transporter = createTransport(config);
 
   // console.log(MAIL_BODY)
   let attachments = files.map((file) => ({
@@ -63,7 +63,7 @@ const Mail = (req, res) => {
   });
 };
 
-  module.exports = {
+  export  {
     Mail,
   };
   

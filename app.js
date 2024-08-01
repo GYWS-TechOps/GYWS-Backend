@@ -1,14 +1,15 @@
-const dotenv = require("dotenv");
-const cors = require("cors");
-const express =require ('express');
-const contactUsRoutes = require("./routes/contactUs");
-const cookieParser = require("cookie-parser");
-const MailerRoute = require("./routes/Mailer")
-
-dotenv.config();
+import {connect} from "mongoose"
+import { config } from "dotenv";
+import cors from "cors";
+import express, { json } from 'express';
+import contactUsRoutes from "./routes/contactUs.js";
+import cookieParser from "cookie-parser";
+import MailerRoute from "./routes/Mailer.js";
+import adminsRouter from "./routes/admins.js"
+config();
 const app = express();
 
-app.use(express.json());
+app.use(json());
 app.use(cookieParser());
 app.use(cors());
 
@@ -21,6 +22,18 @@ app.listen(port, () => {
 app.use("/api/contactUs", contactUsRoutes);
 app.use("/api/Mail", MailerRoute)
 
+// Connect to MongoDB Atlas
+const uri = process.env.ATLAS_URI;
+connect(uri)
+    .then(() => console.log("MongoDB database connection established successfully"))
+    .catch((err) => {
+        console.error("Failed to connect to MongoDB:", err.message);
+        console.error("Stack trace:", err.stack);
+    });
+
+// Use the admins router
+app.use("/admins", adminsRouter);
+ 
 app.get("/", (req, res) => {
     res.send("HAPPY MOMENT! :) GYWS Backend Server is running...");
   });

@@ -1,10 +1,10 @@
-const express = require('express');
-const nodemailer = require("nodemailer");
-const router = express.Router();
+import { Router } from 'express';
+import { createTransport } from "nodemailer";
+const router = Router();
 
 router.post("/", async (req, res, next) => {
     try {
-        const transporter = nodemailer.createTransport({
+        const transporter = createTransport({
             host: 'smtp.gmail.com',
             port: 465,
             secure: true,
@@ -39,4 +39,4 @@ router.post("/", async (req, res, next) => {
     }
 })
 
-module.exports = router;
+export default router;
