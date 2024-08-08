@@ -53,19 +53,27 @@ async function addMember(req, res) {
 }
 
 
-// Edit Member
+
+
 async function editMember(req, res) {
   try {
     const { id } = req.params;
     const updatedData = req.body;
 
-    // Try to find the member by id
-    let updatedMember = await Member.findByIdAndUpdate(id, updatedData, {
-      new: true,
-    });
+    // Check if the id is a valid ObjectId
+    const isValidObjectId = mongoose.Types.ObjectId.isValid(id);
 
-    // If not found by id, try to find by member_id
+    let updatedMember;
+
+    if (isValidObjectId) {
+      // Try to find the member by ObjectId
+      updatedMember = await Member.findByIdAndUpdate(id, updatedData, {
+        new: true,
+      });
+    }
+
     if (!updatedMember) {
+      // Try to find the member by member_id
       updatedMember = await Member.findOneAndUpdate(
         { member_id: id },
         updatedData,
@@ -74,18 +82,21 @@ async function editMember(req, res) {
     }
 
     if (!updatedMember) {
-      return res.status(404).json({ message: "Member not found" });
+      return res.status(404).json({ message: 'Member not found' });
     }
 
     res
       .status(200)
-      .json({ message: "Member updated successfully", member: updatedMember });
+      .json({ message: 'Member updated successfully', member: updatedMember });
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Failed to update member", error: error.message });
+      .json({ message: 'Failed to update member', error: error.message });
   }
 }
+
+export default editMember;
+
 
 // Get Member
 async function getMember(req, res) {
