@@ -14,8 +14,8 @@ router.post("/login", login);
 router.route("/member").get(getMember);
 router.route("/members").get(getAllMembers);
 router.route("/memberspy").get(getMemberByPosOrYear);
-router.post("/addMember",upload.single('image'),uploadImage, addMember);
-router.put("/member/:id",upload.single('image'),uploadImage, editMember);
+router.post("/addMember",upload.single('image'),addMember);
+router.put("/member/:id",upload.single('image'), editMember);
 
 // Middleware to ensure authentication and admin access for specific routes
 router.use(ensureAuthenticated);

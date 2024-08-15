@@ -2,66 +2,88 @@ import mongoose from "mongoose";
 import Member from "../models/members.model.js";
 import { v4 as uuidv4 } from "uuid";
 
-// Add Member
+//Add Member
 async function addMember(req, res) {
   try {
     const {
       name,
       position,
       pos,
-      imageUrl,
+      emails, 
       facebookLink,
       linkedinLink,
-      email,
       year,
+      phoneNumbers, 
+      state,
+      city,
+      dateOfBirth,
+      rollNo,
+      phNo,
+      team // Added team field
     } = req.body;
 
-    // Check if a member with the same email already exists
-    const existingMember = await Member.findOne({ email: email });
+    // Check if a member with the same primary email already exists
+    const existingMember = await Member.findOne({ "emails.0": emails[0] });
 
     if (existingMember) {
       return res
         .status(400)
-        .json({ message: "Member with this email already exists" });
+        .json({ message: "Member with this primary email already exists" });
     }
 
-    // Generate a unique member_id if not provided
-    const member_id = `${year}-${pos}-${email}` || uuidv4();
+    // Process the image file if it exists in the request
+    let image = null;
+    if (req.file) {
+      image = {
+        data: req.file.buffer,
+        contentType: req.file.mimetype
+      };
+    }
+
+    // Generate a unique member_id based on the year, pos, and primary email
+    const member_id = `${year}-${pos}-${emails[0]}` || uuidv4();
 
     const newMember = new Member({
       member_id,
       name,
       position,
       pos,
-      imageUrl,
+      emails,
+      image,
       facebookLink,
       linkedinLink,
-      email,
+      phoneNumbers,
+      state,
+      city,
+      dateOfBirth,
+      rollNo,
+      phNo,
       year,
+      team // Added team field
     });
 
     await newMember.save();
-
-    res
-      .status(201)
-      .json({ message: "Member added successfully", member: newMember });
+    res.status(201).json(newMember);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to add member", error: error.message });
+    res.status(500).json({ message: error.message });
   }
 }
-
-
-
 
 async function editMember(req, res) {
   try {
     const { id } = req.params;
-    const updatedData = req.body;
+    const updatedData = { ...req.body };
 
     // Check if the id is a valid ObjectId
     const isValidObjectId = mongoose.Types.ObjectId.isValid(id);
+
+    // Process the image file if it exists in the request
+    if (req.file) {
+      updatedData.image = {
+        data: req.file.buffer,
+        contentType: req.file.mimetype
+      };
+    }
 
     let updatedMember;
 
@@ -95,7 +117,8 @@ async function editMember(req, res) {
   }
 }
 
-export default editMember;
+
+
 
 
 // Get Member
