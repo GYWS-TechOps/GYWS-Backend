@@ -5,7 +5,7 @@ import streamifier from "streamifier";
 
 config();
 
-const upload = multer(); // Multer configuration to handle file uploads
+const upload = multer(); 
 
 // Cloudinary configuration
 cloudinary.config({
@@ -19,8 +19,11 @@ const uploadImage = (req, res, next) => {
     return next(); // Proceed to the next middleware/route handler if no file is uploaded
   }
 
+  const year = req.body.year|| 2024; 
+  const folderName = `members/${year}`; // Set the folder name based on the year
+
   const uploadStream = cloudinary.uploader.upload_stream(
-    { folder: "members" },
+    { folder: folderName }, 
     (error, result) => {
       if (error) {
         return res.status(500).json({
@@ -38,3 +41,4 @@ const uploadImage = (req, res, next) => {
 };
 
 export { upload, uploadImage };
+

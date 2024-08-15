@@ -10,10 +10,7 @@ const membersSchema = new _Schema({
     type: [{ type: String, required: true }],
     validate: [arrayLimit, '{PATH} requires at least one email.']
   },
-  image: {
-    data: Buffer,
-    contentType: String
-  },
+  imageUrl: { type: String }, // Changed to store image URL
   phoneNumbers: { type: [String], default: [] },
   facebookLink: { type: String, required: true },
   linkedinLink: { type: String, required: true },
@@ -22,7 +19,8 @@ const membersSchema = new _Schema({
   dateOfBirth: { type: Date },
   rollNo: { type: String, default: "" },
   phNo: { type: String, default: "" },
-  team: { type: String, default: "" }, // Added team field
+  team: { type: String, default: "" }, 
+  year: { type: String, required: true } 
 });
 
 function arrayLimit(val) {
@@ -31,5 +29,6 @@ function arrayLimit(val) {
 
 const Member = model("Member", membersSchema);
 export default Member;
+
 
 

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Member from "../models/members.model.js";
 import { v4 as uuidv4 } from "uuid";
+import csvtojson from 'csvjson';
 
 //Add Member
 async function addMember(req, res) {
@@ -19,10 +20,9 @@ async function addMember(req, res) {
       dateOfBirth,
       rollNo,
       phNo,
-      team // Added team field
+      team 
     } = req.body;
 
-    // Check if a member with the same primary email already exists
     const existingMember = await Member.findOne({ "emails.0": emails[0] });
 
     if (existingMember) {
@@ -31,16 +31,6 @@ async function addMember(req, res) {
         .json({ message: "Member with this primary email already exists" });
     }
 
-    // Process the image file if it exists in the request
-    let image = null;
-    if (req.file) {
-      image = {
-        data: req.file.buffer,
-        contentType: req.file.mimetype
-      };
-    }
-
-    // Generate a unique member_id based on the year, pos, and primary email
     const member_id = `${year}-${pos}-${emails[0]}` || uuidv4();
 
     const newMember = new Member({
@@ -49,7 +39,7 @@ async function addMember(req, res) {
       position,
       pos,
       emails,
-      image,
+      imageUrl: req.body.imageUrl, 
       facebookLink,
       linkedinLink,
       phoneNumbers,
@@ -67,7 +57,8 @@ async function addMember(req, res) {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};
+
 
 async function editMember(req, res) {
   try {
@@ -79,10 +70,7 @@ async function editMember(req, res) {
 
     // Process the image file if it exists in the request
     if (req.file) {
-      updatedData.image = {
-        data: req.file.buffer,
-        contentType: req.file.mimetype
-      };
+      updatedData.imageUrl = req.body.imageUrl; // Use the image URL from the request body
     }
 
     let updatedMember;
@@ -116,10 +104,6 @@ async function editMember(req, res) {
       .json({ message: 'Failed to update member', error: error.message });
   }
 }
-
-
-
-
 
 // Get Member
 async function getMember(req, res) {
@@ -202,6 +186,9 @@ async function getMemberByPosOrYear(req, res) {
       .json({ message: "Failed to get members", error: error.message });
   }
 }
+
+
+
 
 export {
   addMember,
