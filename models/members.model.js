@@ -6,29 +6,21 @@ const membersSchema = new _Schema({
   name: { type: String, required: true },
   position: { type: String, required: true },
   pos: { type: String, required: true },
-  emails: {
-    type: [{ type: String, required: true }],
-    validate: [arrayLimit, '{PATH} requires at least one email.']
-  },
-  imageUrl: { type: String }, // Changed to store image URL
-  phoneNumbers: { type: [String], default: [] },
+  imageUrl: { type: String },
+  email:{type:String, unique: true},
+  otherEmails:{type:[String], default:[""]},
+  phoneNumbers: { type: [String], default: [""] },
   facebookLink: { type: String, required: true },
   linkedinLink: { type: String, required: true },
   state: { type: String, default: "" },
   city: { type: String, default: "" },
   dateOfBirth: { type: Date },
   rollNo: { type: String, default: "" },
-  phNo: { type: String, default: "" },
-  team: { type: String, default: "" }, 
-  year: { type: String, required: true } 
+  team: { type: String, default: "" },
+  year: { type: String, required: true }
 });
 
-function arrayLimit(val) {
-  return val.length > 0;
-}
+
 
 const Member = model("Member", membersSchema);
 export default Member;
-
-
-
