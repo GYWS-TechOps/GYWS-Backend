@@ -15,14 +15,14 @@ router.route("/member").get(getMember);
 router.route("/members").get(getAllMembers);
 router.route("/memberspy").get(getMemberByPosOrYear);
 
-router.use(ensureAuthenticated);
-router.use(ensureAdmin);
 
 router.post("/addMember",upload.single('image'),uploadImage,addMember);
 router.post("/addMembers",upload.single('file'),importCSVData)
 router.put("/member/:id",upload.single('image'),uploadImage, editMember);
 router.delete("/member/:id", deleteMember);
 
+router.use(ensureAuthenticated);
+router.use(ensureAdmin);
 
 // Routes that require admin permissions
 
