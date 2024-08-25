@@ -1,8 +1,8 @@
 import express from "express";
-import  { addMember, editMember, getMember, deleteMember, getAllMembers,getMemberByPosOrYear, importCSVData, } from "../Controller/MembersControllers.js";
-import { register, login } from "../Controller/AuthControllers.js";
-import { ensureAuthenticated, ensureAdmin } from "../Middlewares/Authorization.js";
-import {upload, uploadImage} from "../Middlewares/Cloudinary.js"
+import  { addMember, editMember, getMember, deleteMember, getAllMembers,getMemberByPosOrYear, importCSVData, addMemberData} from "../Controller/AdminPanel/MembersControllers.js";
+import { register, login } from "../Controller/AdminPanel/AuthControllers.js"
+import { ensureAuthenticated, ensureAdmin } from "../Middlewares/AdminPanel/Authorization.js";
+import {upload, uploadImage} from "../Middlewares/AdminPanel/Cloudinary.js";
 
 const router = express.Router();
 
@@ -15,11 +15,11 @@ router.route("/member").get(getMember);
 router.route("/members").get(getAllMembers);
 router.route("/memberspy").get(getMemberByPosOrYear);
 
-
+router.put("/addMemberData/:_id",upload.single('image'),uploadImage,addMemberData);
+router.put("/member/:_id",upload.single('image'),uploadImage, editMember);
 router.post("/addMember",upload.single('image'),uploadImage,addMember);
+router.delete("/member/:_id", deleteMember);
 router.post("/addMembers",upload.single('file'),importCSVData)
-router.put("/member/:id",upload.single('image'),uploadImage, editMember);
-router.delete("/member/:id", deleteMember);
 
 router.use(ensureAuthenticated);
 router.use(ensureAdmin);

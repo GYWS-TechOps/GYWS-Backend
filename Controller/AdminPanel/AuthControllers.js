@@ -1,4 +1,4 @@
-import Admin from '../models/admins.model.js';
+import Admin from '../../models/AdminPanel/admins.model.js';
 import jwt from 'jsonwebtoken';
 
 const register = async (req, res) => {

@@ -20,8 +20,8 @@ const uploadImage = (req, res, next) => {
     return next(); // Proceed to the next middleware/route handler if no file is uploaded
   }
 
-  const year = req.body.year|| 2024; 
-  const folderName = `members/${year}`; // Set the folder name based on the year
+  const currentYear = new Date().getFullYear(); // Get the current year
+  const folderName = `members/${currentYear}`; // Set the folder name based on the current year
 
   const uploadStream = cloudinary.uploader.upload_stream(
     { folder: folderName }, 
@@ -33,7 +33,7 @@ const uploadImage = (req, res, next) => {
         });
       }
 
-      req.body.imageUrl = result.secure_url;
+      req.body.imageUrls = [result.secure_url]; // Correctly set the image URL
       next();
     }
   );
@@ -42,4 +42,5 @@ const uploadImage = (req, res, next) => {
 };
 
 export { upload, uploadImage };
+
 
