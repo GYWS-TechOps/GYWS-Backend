@@ -7,6 +7,7 @@ import path from "path";
 import csv from "csv-parser";
 import { Readable } from "stream";
 import updateYearsWithMemberTeams from "../../Middlewares/AdminPanel/Member_Year_connect.js"
+import { addTeamData } from "../../Middlewares/AdminPanel/team_methods.js";
 
 
 
@@ -88,97 +89,48 @@ const editMember = async (req, res) => {
   }
 };
 
+//function to add MemberData
 const addMemberData = async (req, res) => {
   try {
-    // Extract _id from params and other data from req.body
     const { _id } = req.params;
     const {
-      teams, // No default, so it remains undefined if not provided
+      teams,
       emails,
       imageUrls,
       phoneNumbers,
       ...otherFields
     } = req.body;
 
-    // Find the existing member by _id
     const existingMember = await Member.findById(_id);
 
     if (!existingMember) {
       return res.status(404).send({ message: "Member not found with the provided _id" });
     }
 
-    // Prepare the update data
-    const updateData = { ...otherFields }; // Add other fields if provided
+    const updateData = { ...otherFields };
 
-    // Merge and deduplicate emails, if provided
     if (emails) {
       updateData.emails = [...new Set([...existingMember.emails, ...emails])];
     }
 
-    // Merge and deduplicate imageUrls, if provided
     if (imageUrls) {
       updateData.imageUrls = [...new Set([...existingMember.imageUrls, ...imageUrls])];
     }
 
-    // Merge and deduplicate phoneNumbers, if provided
     if (phoneNumbers) {
       updateData.phoneNumbers = [...new Set([...existingMember.phoneNumbers, ...phoneNumbers])];
     }
 
-    // Handle teams and teamAndpos logic, if provided
     if (teams) {
-      const updatedTeams = [...existingMember.teams];
-
-      teams.forEach((newTeam) => {
-        const existingTeamIndex = updatedTeams.findIndex((team) => team.year === newTeam.year);
-
-        if (existingTeamIndex !== -1) {
-          // Merge and deduplicate teamAndpos within the same year
-          const existingTeamAndpos = updatedTeams[existingTeamIndex].teamAndpos;
-          const mergedTeamAndpos = [
-            ...existingTeamAndpos,
-            ...newTeam.teamAndpos.filter(
-              (newPos) =>
-                !existingTeamAndpos.some(
-                  (existingPos) =>
-                    existingPos.team === newPos.team &&
-                    existingPos.pos === newPos.pos &&
-                    existingPos.position === newPos.position
-                )
-            ),
-          ];
-
-          // Remove duplicates from mergedTeamAndpos
-          const uniqueTeamAndpos = mergedTeamAndpos.filter(
-            (pos, index, self) =>
-              index ===
-              self.findIndex(
-                (p) =>
-                  p.team === pos.team &&
-                  p.pos === pos.pos &&
-                  p.position === pos.position
-              )
-          );
-
-          // Update the team with the merged and deduplicated teamAndpos
-          updatedTeams[existingTeamIndex].teamAndpos = uniqueTeamAndpos;
-        } else {
-          // If the year does not exist, add the new team
-          updatedTeams.push(newTeam);
-        }
-      });
-
-      updateData.teams = updatedTeams;
+      updateData.teams = addTeamData(existingMember.teams, teams);
     }
 
-    // Update the member in the database
     const updatedMember = await Member.findByIdAndUpdate(
       _id,
       { $set: updateData },
       { new: true, runValidators: true }
     );
 
-    // Update the Years schema based on the new data
     if (updateData.teams) {
       await updateYearsWithMemberTeams(_id);
     }
@@ -188,8 +140,6 @@ const addMemberData = async (req, res) => {
     res.status(500).send({ message: "An error occurred", error: err.message });
   }
 };
-
-
 
 // Get Member
 async function getMember(req, res) {
@@ -264,6 +214,10 @@ async function getMemberByPosOrYear(req, res) {
     res.status(500).json({ message: "Failed to get members", error: error.message });
   }
 }
+
+
+
+
 
 
 async function importCSVData(req, res) {
@@ -360,6 +314,13 @@ async function importCSVData(req, res) {
     res.status(500).json({ message: error.message });
   }
 }
+
+
+
+
+
+
+
 
 export {
   addMember,
