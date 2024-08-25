@@ -17,7 +17,8 @@ const addMember = async (req, res) => {
     const { name, emails, imageUrls, phoneNumbers, facebookLink, linkedinLink, state, city, dateOfBirth, rollNo, teams } = req.body;
 
     // Generate member_id from the name and the first email in the array
-    const _id = `${name}-${emails[0]}`;
+    const _id = `${name.toLowerCase().replace(/\s+/g, '')}-${emails[0].toLowerCase().replace(/\s+/g, '')}`;
+
 
     // Check if a member with the same member_id already exists
     const existingMember = await Member.findOne({ _id });
@@ -47,7 +48,7 @@ const addMember = async (req, res) => {
 
    
 
-    res.status(200).json({ message: "Member added/updated successfully." });
+    res.status(200).json({ message: "Member added successfully."});
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "An error occurred while adding/updating the member." });
