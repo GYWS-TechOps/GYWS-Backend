@@ -316,6 +316,43 @@ async function importCSVData(req, res) {
   }
 }
 
+const searchMember = async (req, res, next) => {
+  try {
+    const { searchString } = req.params; // Get the search string from request parameters
+
+    // Define a regex to perform a case-insensitive search
+    const regex = new RegExp(searchString, 'i');
+
+    // Search in multiple fields using $or operator
+    const members = await Member.find({
+      $or: [
+        { name: regex },
+        { emails: regex },
+        { phoneNumbers: regex },
+        { facebookLink: regex },
+        { linkedinLink: regex },
+        { state: regex },
+        { city: regex },
+        { rollNo: regex },
+        { "teams.teamAndpos.team": regex },
+        { "teams.teamAndpos.pos": regex },
+        { "teams.teamAndpos.position": regex }
+      ]
+    });
+
+    // If no members are found, return a 404
+    if (!members.length) {
+      return res.status(404).json({ message: "No members found" });
+    }
+
+    // Respond with the found members as an array
+    res.status(200).json(members);
+
+  } catch (err) {
+    console.error("Error searching member:", err);
+    res.status(500).json({ message: "An error occurred during the search.", error: err.message });
+  }
+};
 
 
 
@@ -331,5 +368,6 @@ export {
   deleteMember,
   getMemberByPosOrYear,
   addMemberData,
+  searchMember,
   importCSVData,
 };
