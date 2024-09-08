@@ -6,12 +6,18 @@ import contactUsRoutes from "./routes/contactUs.js";
 import cookieParser from "cookie-parser";
 import MailerRoute from "./routes/Mailer.js";
 import adminsRouter from "./routes/admins.js"
-config();
+
 const app = express();
+config();
+const corsOrigin ={
+    origin:'http://localhost:3001', //or whatever port your frontend is using
+    credentials:true,            
+    optionSuccessStatus:200
+}
 
 app.use(json());
 app.use(cookieParser());
-app.use(cors());
+app.use(cors(corsOrigin));
 
 const port = process.env.PORT || 8000;
 
