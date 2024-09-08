@@ -9,15 +9,17 @@ import adminsRouter from "./routes/admins.js"
 
 const app = express();
 config();
+
 const corsOrigin ={
-    origin:'http://localhost:3000', //or whatever port your frontend is using
+    origin:'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
     credentials:true,            
     optionSuccessStatus:200
 }
+app.use(cors(corsOrigin));
 
 app.use(json());
 app.use(cookieParser());
-app.use(cors(corsOrigin));
 
 const port = process.env.PORT || 8000;
 
