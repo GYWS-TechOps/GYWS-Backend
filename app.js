@@ -10,13 +10,7 @@ import adminsRouter from "./routes/admins.js"
 const app = express();
 config();
 
-const corsOrigin ={
-    origin:'http://localhost:3000',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
-    credentials:true,            
-    optionSuccessStatus:200
-}
-app.use(cors(corsOrigin));
+app.use(cors());
 
 app.use(json());
 app.use(cookieParser());
