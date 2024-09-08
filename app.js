@@ -10,7 +10,7 @@ import adminsRouter from "./routes/admins.js"
 const app = express();
 config();
 const corsOrigin ={
-    origin:'http://localhost:3001', //or whatever port your frontend is using
+    origin:'http://localhost:3000', //or whatever port your frontend is using
     credentials:true,            
     optionSuccessStatus:200
 }
