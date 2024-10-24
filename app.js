@@ -9,15 +9,18 @@ import adminsRouter from "./routes/admins.js"
 
 const app = express();
 config();
-const corsOrigin ={
-    origin:'http://localhost:3000', //or whatever port your frontend is using
-    credentials:true,            
-    optionSuccessStatus:200
-}
+
+app.use(cors());
 
 app.use(json());
 app.use(cookieParser());
-app.use(cors(corsOrigin));
+
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    next();
+});
 
 const port = process.env.PORT || 8000;
 
