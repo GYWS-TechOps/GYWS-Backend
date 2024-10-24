@@ -16,7 +16,8 @@ const login = async (req, res) => {
     const { username, password } = req.body;
     try {
         const admin = await Admin.findOne({ username });
-        if (!admin || !(await admin.comparePassword(password))) {
+        if(!admin) return res.status(409).json({success : false , code : 409 , message: "user not found, please register"})
+        if (await admin.comparePassword(password)) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
         // console.log(process.env.JWT_SECRET)
