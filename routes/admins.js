@@ -1,5 +1,5 @@
 import express from "express";
-import  { addMember, editMember, getMember, deleteMember, getAllMembers,getMemberByPosOrYear, importCSVData, addMemberData, searchMember} from "../Controller/AdminPanel/MembersControllers.js";
+import  { addMember, editMember, getMember, deleteMember, getAllMembers,getMemberByPosOrYear,  addMemberData, searchMember} from "../Controller/AdminPanel/MembersControllers.js";
 import { register, login } from "../Controller/AdminPanel/AuthControllers.js"
 import { ensureAuthenticated, ensureAdmin } from "../Middlewares/AdminPanel/Authorization.js";
 import {upload, uploadImage} from "../Middlewares/AdminPanel/Cloudinary.js";
@@ -20,7 +20,7 @@ router.put("/addMemberData/:_id",upload.single('image'),uploadImage,addMemberDat
 router.put("/member/:_id",upload.single('image'),uploadImage, editMember);
 router.post("/addMember",upload.single('image'),uploadImage,addMember);
 router.delete("/member/:_id", deleteMember);
-router.post("/addMembers",upload.single('file'),importCSVData)
+
 
 router.use(ensureAuthenticated);
 router.use(ensureAdmin);

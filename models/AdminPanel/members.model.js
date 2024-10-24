@@ -4,7 +4,8 @@ const { Schema: _Schema, model, models } = pkg;
 
 const membersSchema = new _Schema({
   _id: { type: String }, // Use member_id as the default _id
-  name: { type: String, required: true },
+  firstName: { type: String, required: true },
+  lastName: {type: String},
   emails: { type: [String], required: true },
   imageUrls: { type: [String], default: [] },
   phoneNumbers: { type: [String], default: [] },

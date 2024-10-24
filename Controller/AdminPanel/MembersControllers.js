@@ -1,11 +1,4 @@
-import mongoose from "mongoose";
 import Member from "../../models/AdminPanel/members.model.js";
-import Years from "../../models/AdminPanel/years.model.js";
-import { v4 as uuidv4 } from "uuid";
-import fs from "fs";
-import path from "path";
-import csv from "csv-parser";
-import { Readable } from "stream";
 import updateYearsWithMemberTeams from "../../Middlewares/AdminPanel/Member_Year_connect.js"
 import { addTeamData } from "../../Middlewares/AdminPanel/team_methods.js";
 
@@ -14,10 +7,10 @@ import { addTeamData } from "../../Middlewares/AdminPanel/team_methods.js";
 //Add Member
 const addMember = async (req, res) => {
   try {
-    const { name, emails, imageUrls, phoneNumbers, facebookLink, linkedinLink, state, city, dateOfBirth, rollNo, teams } = req.body;
+    const { firstName,lastName, emails, imageUrls, phoneNumbers, facebookLink, linkedinLink, state, city, dateOfBirth, rollNo, teams } = req.body;
 
     // Generate member_id from the name and the first email in the array
-    const _id = `${name.toLowerCase().replace(/\s+/g, '')}-${emails[0].toLowerCase().replace(/\s+/g, '')}`;
+    const _id = `${firstName.toLowerCase().replace(/\s+/g, '')}-${emails[0].toLowerCase().replace(/\s+/g, '')}`;
 
 
     // Check if a member with the same member_id already exists
@@ -30,7 +23,8 @@ const addMember = async (req, res) => {
       // Create a new member
       const newMember = new Member({
         _id,
-        name,
+        firstName,
+        lastName,
         emails,
         imageUrls,
         phoneNumbers,
@@ -221,100 +215,7 @@ async function getMemberByPosOrYear(req, res) {
 
 
 
-async function importCSVData(req, res) {
-  try {
-    const file = req.file;
 
-    if (!file) {
-      return res.status(400).json({ message: "No file uploaded" });
-    }
-
-    const batchSize = parseInt(req.query.batchSize) || 100;
-
-    const members = [];
-    const errors = []; 
-
-    const stream = Readable.from(file.buffer.toString());
-
-    stream
-      .pipe(csv())
-      .on("data", async (row) => {
-        try {
-          const phoneNumberString = typeof row.phoneNumbers === "string" ? row.phoneNumbers : "";
-          const otherEmailsString = typeof row.otherEmails === "string" ? row.otherEmails : "";
-
-          const filteredPhoneNumbers = phoneNumberString
-            .split(",")
-            .map((phone) => phone.trim())
-            .filter((phone) => phone);
-          const filteredEmails = otherEmailsString
-            .split(",")
-            .map((email) => email.trim())
-            .filter((email) => email);
-
-          if (!row.email) {
-            errors.push({ row, error: "At least one valid email is required" });
-            return;
-          }
-          
-          const member_id = `${row.year}-${row.pos}-${row.email}` || uuidv4();
-
-          const existingMember = await Member.findOne({ email: row.email });
-
-          if (existingMember) {
-            errors.push({ row, error: `Member with email ${row.email} already exists` });
-            return;
-          }
-
-          const newMember = {
-            member_id,
-            name: row.name,
-            position: row.position,
-            pos: row.pos,
-            emails: [row.email, ...filteredEmails],
-            imageUrls: [row.imageUrl],
-            facebookLink: row.facebookLink,
-            linkedinLink: row.linkedinLink,
-            phoneNumbers: filteredPhoneNumbers,
-            state: row.state || "",
-            city: row.city || "",
-            dateOfBirth: row.dateOfBirth ? new Date(row.dateOfBirth) : null,
-            rollNo: row.rollNo || "",
-            teams: [{ teamAndpos: [{ team: row.team, pos: row.pos, position: row.position }], year: row.year }],
-          };
-
-          members.push(newMember);
-
-          if (members.length >= batchSize) {
-            await Member.insertMany(members);
-            members.length = 0;
-          }
-        } catch (err) {
-          errors.push({ row, error: `Error processing row: ${err.message}` });
-        }
-      })
-      .on("end", async () => {
-        try {
-          if (members.length > 0) {
-            await Member.insertMany(members);
-          }
-
-          if (errors.length > 0) {
-            res.status(400).json({ message: "Some members could not be added", errors });
-          } else {
-            res.status(201).json({ message: "Members added successfully" });
-          }
-        } catch (err) {
-          res.status(500).json({ message: "An error occurred during the final insertion.", errors });
-        }
-      })
-      .on("error", (err) => {
-        res.status(500).json({ message: "An error occurred during file processing." });
-      });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
 
 const searchMember = async (req, res, next) => {
   try {
@@ -326,7 +227,8 @@ const searchMember = async (req, res, next) => {
     // Search in multiple fields using $or operator
     const members = await Member.find({
       $or: [
-        { name: regex },
+        { firstName: regex },
+        {lastName: regex },
         { emails: regex },
         { phoneNumbers: regex },
         { facebookLink: regex },
@@ -369,5 +271,4 @@ export {
   getMemberByPosOrYear,
   addMemberData,
   searchMember,
-  importCSVData,
 };
